@@ -1,4 +1,3 @@
-/runtime/Cargo.lock
 /target/
 genesis.json
 genesis.yaml
