@@ -4,6 +4,9 @@ version = "0.8.28-5b75542"
 authors = ["Skalman <skalman@riseup.net>"]
 edition = "2018"
 
+[workspace]
+members = [ "runtime" ]
+
 [dependencies]
 base64        = "*"
 clap          = {version = "~2.27.0", features = ["yaml"]}
@@ -36,7 +39,7 @@ sp-keystore       = { git = "https://github.com/paritytech/substrate", branch = 
 sp-state-machine  = { git = "https://github.com/paritytech/substrate", branch = "master" }
 
 # host-api shim wasm blob
-runtime = { package = "hostapi-runtime", path = "../../runtimes/hostapi", features = ["std", "vendor-fix"] }
+runtime = { package = "hostapi-runtime", path = "runtime", features = [ "std", "vendor-fix" ] }
 
 [features]
 export-memory = [ "runtime/export-memory" ]
