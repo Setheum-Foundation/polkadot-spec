@@ -1,4 +1,4 @@
-<TeXmacs|1.99.17>
+<TeXmacs|1.99.16>
 
 <project|host-spec.tm>
 
@@ -602,8 +602,8 @@
 
     in which, <math|E<rsub|id><around*|(|BABE|)>> is the BABE consensus
     engine unique identifier defined in Definition
-    <reference|defn-consensus-message-digest>. The Seal digest item is referred to as
-    <strong|BABE Seal>.
+    <reference|defn-consensus-message-digest>. The Seal digest item is
+    referred to as <strong|BABE Seal>.
 
     \;
   </definition>
@@ -1316,12 +1316,12 @@
 
   Whenever a Polkadot node detects that it is lagging behind the finality
   procedure, it needs to initiate a <em|catch-up> procedure. Neighbor packet
-  network message (see Section <reference|sect-msg-grandpa>) reveals
-  the round number for the last finalized GRANDPA round which the sending
-  peer has observed. This provides a means to identify a discrepancy in the
-  latest finalized round number observed among the peers. If such a
-  discrepancy is observed, the node needs to initiate the catch-up procedure
-  explained in Section <reference|sect-grandpa-catchup>.
+  network message (see Section <reference|sect-msg-grandpa>) reveals the
+  round number for the last finalized GRANDPA round which the sending peer
+  has observed. This provides a means to identify a discrepancy in the latest
+  finalized round number observed among the peers. If such a discrepancy is
+  observed, the node needs to initiate the catch-up procedure explained in
+  Section <reference|sect-grandpa-catchup>.
 
   In particular, this procedure involves sending <em|catch-up request> and
   processing <em|catch-up response> messages specified here:
@@ -2149,6 +2149,316 @@
     <qed>
   </with>
 
+  <section|Bridge design (BEEFY)>
+
+  The BEEFY (Bridge Effiency Enabling Finality Yielder) is a secondary
+  protocol to GRANDPA to support efficient bridging between the Polkadot
+  network (relay chain) and remote, segregated blockchains, such as Ethereum,
+  which were not built with the Polkadot interchain operability in mind. The
+  protocol allows participants of the remote network to verify finality
+  proofs created by the Polkadot relay chain validators by reading on chain
+  data and vice versa. In other words: clients in the Ethereum network should
+  able to verify that the Polkadot network is at a specific state, and the
+  other way around.
+
+  \;
+
+  Storing all the information necessary to verify the state of the remote
+  chain, such as the block headers, is too expensive. BEEFY only stores the
+  merkle proofs of the block header hashes.
+
+  \;
+
+  <subsubsection|Preliminaries>
+
+  <\definition>
+    The statement, <text|<math|<text|<strong|S>>>>, is the same piece of
+    information which every relay chain validator is voting on. Namely, the
+    MMR of all the block header hashes leading up to the latest, finalized
+    block. The Polkadot Host uses ECDSA for signing the statement, since
+    Ethereum has easier compatibility for it. <todo|how does one map the
+    validator set keys to the corresponding ECDSA keys?>
+  </definition>
+
+  <\definition>
+    A light client, <text|<math|<text|<strong|L<rsub|c>><strong|>>>>, is an
+    abstract entity in a remote network such as Ethereum. It can be a node or
+    a smart contract with the intent of requesting finality proofs from the
+    Polkadot network.
+  </definition>
+
+  <\definition>
+    A relayer (or \Pprover\Q), <text-dots>, is an abstract entity which takes
+    finality proofs from the Polkadot network and makes those available to
+    the light clients and vice versa. Inherently, the relayer tries to
+    convince the light clients that the finality proofs have been voted for
+    by the Polkadot relay chain validators. The relayer operates offchain and
+    can for example be a node or a collection of nodes.
+
+    \;
+
+    How the finality proofs are forwarded to light clients depends on the
+    nature of the bridge. On Ethereum, for example, the relayer could call a
+    smart contract which saves the data on-chain and light clients can fetch
+    this data. A critical requirement is that the light clients can verify
+    the validity of the finality proofs themselves without having to trust
+    the relayer. The relayer essentially just moves information around.
+  </definition>
+
   \;
 </body>
 
+<\initial>
+  <\collection>
+    <associate|chapter-nr|5>
+    <associate|page-first|41>
+    <associate|section-nr|0>
+    <associate|subsection-nr|7>
+  </collection>
+</initial>
+
+<\references>
+  <\collection>
+    <associate|algo-attempt-to\Ufinalize|<tuple|6.15|?>>
+    <associate|algo-block-production|<tuple|6.4|?>>
+    <associate|algo-block-production-lottery|<tuple|6.1|?>>
+    <associate|algo-build-block|<tuple|6.7|?>>
+    <associate|algo-derive-primary|<tuple|6.10|?>>
+    <associate|algo-finalizable|<tuple|6.14|?>>
+    <associate|algo-grandpa-best-candidate|<tuple|6.11|?>>
+    <associate|algo-grandpa-ghost|<tuple|6.12|?>>
+    <associate|algo-grandpa-round|<tuple|6.9|?>>
+    <associate|algo-initiate-grandpa|<tuple|6.8|?>>
+    <associate|algo-process-catchup-request|<tuple|6.16|?>>
+    <associate|algo-process-catchup-response|<tuple|6.17|?>>
+    <associate|algo-slot-time|<tuple|6.3|?>>
+    <associate|algo-verify-authorship-right|<tuple|6.5|?>>
+    <associate|algo-verify-slot-winner|<tuple|6.6|?>>
+    <associate|auto-1|<tuple|6|?>>
+    <associate|auto-10|<tuple|6.2.3|?>>
+    <associate|auto-11|<tuple|6.1|?>>
+    <associate|auto-12|<tuple|6.2.4|?>>
+    <associate|auto-13|<tuple|6.2.5|?>>
+    <associate|auto-14|<tuple|6.2.6|?>>
+    <associate|auto-15|<tuple|6.2.7|?>>
+    <associate|auto-16|<tuple|6.3|?>>
+    <associate|auto-17|<tuple|6.3.1|?>>
+    <associate|auto-18|<tuple|6.3.2|?>>
+    <associate|auto-19|<tuple|6.3|?>>
+    <associate|auto-2|<tuple|6.1|?>>
+    <associate|auto-20|<tuple|6.3.2.1|?>>
+    <associate|auto-21|<tuple|6.4|?>>
+    <associate|auto-22|<tuple|6.3.2.2|?>>
+    <associate|auto-23|<tuple|6.3.2.3|?>>
+    <associate|auto-24|<tuple|6.3.3|?>>
+    <associate|auto-25|<tuple|6.3.3.1|?>>
+    <associate|auto-26|<tuple|6.3.4|?>>
+    <associate|auto-27|<tuple|6.4|?>>
+    <associate|auto-28|<tuple|6.4.1|?>>
+    <associate|auto-29|<tuple|6.4.1.1|?>>
+    <associate|auto-3|<tuple|6.1.1|?>>
+    <associate|auto-30|<tuple|6.4.1.2|?>>
+    <associate|auto-31|<tuple|6.4.1.3|?>>
+    <associate|auto-32|<tuple|6.5|?>>
+    <associate|auto-33|<tuple|6.5.0.1|?>>
+    <associate|auto-4|<tuple|6.1.2|?>>
+    <associate|auto-5|<tuple|6.1|?>>
+    <associate|auto-6|<tuple|6.2|?>>
+    <associate|auto-7|<tuple|6.2|?>>
+    <associate|auto-8|<tuple|6.2.1|?>>
+    <associate|auto-9|<tuple|6.2.2|?>>
+    <associate|chap-consensu|<tuple|6|?>>
+    <associate|defn-authority-list|<tuple|6.1|?>>
+    <associate|defn-authority-set-id|<tuple|6.23|?>>
+    <associate|defn-babe-constant|<tuple|6.10|?>>
+    <associate|defn-babe-header|<tuple|6.19|?>>
+    <associate|defn-babe-seal|<tuple|6.20|?>>
+    <associate|defn-block-signature|<tuple|6.20|?>>
+    <associate|defn-block-time|<tuple|6.17|?>>
+    <associate|defn-chain-quality|<tuple|6.16|?>>
+    <associate|defn-consensus-message-digest|<tuple|6.3|?>>
+    <associate|defn-epoch-randomness|<tuple|6.21|?>>
+    <associate|defn-epoch-slot|<tuple|6.6|?>>
+    <associate|defn-epoch-subchain|<tuple|6.9|?>>
+    <associate|defn-equivocation|<tuple|6.27|?>>
+    <associate|defn-finalized-block|<tuple|6.43|?>>
+    <associate|defn-finalizing-justification|<tuple|6.38|?>>
+    <associate|defn-gossip-message|<tuple|6.34|?>>
+    <associate|defn-grandpa-catchup-request-msg|<tuple|6.40|?>>
+    <associate|defn-grandpa-catchup-response-msg|<tuple|6.41|?>>
+    <associate|defn-grandpa-completable|<tuple|6.33|?>>
+    <associate|defn-grandpa-justification|<tuple|6.37|?>>
+    <associate|defn-grandpa-voter|<tuple|6.22|?>>
+    <associate|defn-observed-votes|<tuple|6.30|?>>
+    <associate|defn-prunned-best|<tuple|6.15|?>>
+    <associate|defn-relative-syncronization|<tuple|6.13|?>>
+    <associate|defn-sign-round-vote|<tuple|6.35|?>>
+    <associate|defn-slot-offset|<tuple|6.12|?>>
+    <associate|defn-sync-period|<tuple|6.18|?>>
+    <associate|defn-total-potential-votes|<tuple|6.31|?>>
+    <associate|defn-vote|<tuple|6.25|?>>
+    <associate|defn-winning-threshold|<tuple|6.11|?>>
+    <associate|exmp-candid-unfinalized|<tuple|6.42|?>>
+    <associate|note-slot|<tuple|6.8|?>>
+    <associate|sect-authority-set|<tuple|6.1.1|?>>
+    <associate|sect-babe|<tuple|6.2|?>>
+    <associate|sect-block-building|<tuple|6.2.7|?>>
+    <associate|sect-block-finalization|<tuple|6.4|?>>
+    <associate|sect-block-production|<tuple|6.2|?>>
+    <associate|sect-consensus-message-digest|<tuple|6.1.2|?>>
+    <associate|sect-epoch-randomness|<tuple|6.2.5|?>>
+    <associate|sect-finality|<tuple|6.3|?>>
+    <associate|sect-grandpa-catchup|<tuple|6.4.1|?>>
+    <associate|sect-grandpa-catchup-messages|<tuple|6.3.2.3|?>>
+    <associate|sect-sending-catchup-request|<tuple|6.4.1.1|?>>
+    <associate|sect-verifying-authorship|<tuple|6.2.6|?>>
+    <associate|tabl-consensus-messages-babe|<tuple|6.1|?>>
+    <associate|tabl-consensus-messages-grandpa|<tuple|6.2|?>>
+  </collection>
+</references>
+
+<\auxiliary>
+  <\collection>
+    <\associate|bib>
+      w3f_research_group_blind_2019
+
+      david_ouroboros_2018
+
+      stewart_grandpa:_2019
+    </associate>
+    <\associate|figure>
+      <tuple|normal|<\surround|<hidden-binding|<tuple>|6.1>|>
+        Examplary result of Median Algorithm in first sync epoch with
+        <with|mode|<quote|math>|s<rsub|cq>=9> and
+        <with|mode|<quote|math>|k=1>.
+      </surround>|<pageref|auto-11>>
+    </associate>
+    <\associate|table>
+      <tuple|normal|<\surround|<hidden-binding|<tuple>|6.1>|>
+        The consensus digest item for BABE authorities
+      </surround>|<pageref|auto-5>>
+
+      <tuple|normal|<\surround|<hidden-binding|<tuple>|6.2>|>
+        The consensus digest item for GRANDPA authorities
+      </surround>|<pageref|auto-6>>
+
+      <tuple|normal|<\surround|<hidden-binding|<tuple>|6.3>|>
+        \;
+      </surround>|<pageref|auto-19>>
+
+      <tuple|normal|<\surround|<hidden-binding|<tuple>|6.4>|>
+        Signature for a message in a round.
+      </surround>|<pageref|auto-21>>
+    </associate>
+    <\associate|toc>
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|6<space|2spc>Consensus>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-1><vspace|0.5fn>
+
+      6.1<space|2spc>Common Consensus Structures
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-2>
+
+      <with|par-left|<quote|1tab>|6.1.1<space|2spc>Consensus Authority Set
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-3>>
+
+      <with|par-left|<quote|1tab>|6.1.2<space|2spc>Runtime-to-Consensus
+      Engine Message <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-4>>
+
+      6.2<space|2spc>Block Production <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-7>
+
+      <with|par-left|<quote|1tab>|6.2.1<space|2spc>Preliminaries
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-8>>
+
+      <with|par-left|<quote|1tab>|6.2.2<space|2spc>Block Production Lottery
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-9>>
+
+      <with|par-left|<quote|1tab>|6.2.3<space|2spc>Slot Number Calculation
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-10>>
+
+      <with|par-left|<quote|1tab>|6.2.4<space|2spc>Block Production
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-12>>
+
+      <with|par-left|<quote|1tab>|6.2.5<space|2spc>Epoch Randomness
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-13>>
+
+      <with|par-left|<quote|1tab>|6.2.6<space|2spc>Verifying Authorship Right
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-14>>
+
+      <with|par-left|<quote|1tab>|6.2.7<space|2spc>Block Building Process
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-15>>
+
+      6.3<space|2spc>Finality <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-16>
+
+      <with|par-left|<quote|1tab>|6.3.1<space|2spc>Preliminaries
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-17>>
+
+      <with|par-left|<quote|1tab>|6.3.2<space|2spc>GRANDPA Messages
+      Specification <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-18>>
+
+      <with|par-left|<quote|2tab>|6.3.2.1<space|2spc>Vote Messages
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-20>>
+
+      <with|par-left|<quote|2tab>|6.3.2.2<space|2spc>Finalizing Message
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-22>>
+
+      <with|par-left|<quote|2tab>|6.3.2.3<space|2spc>Catch-up Messages
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-23>>
+
+      <with|par-left|<quote|1tab>|6.3.3<space|2spc>Initiating the GRANDPA
+      State <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-24>>
+
+      <with|par-left|<quote|2tab>|6.3.3.1<space|2spc>Voter Set Changes
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-25>>
+
+      <with|par-left|<quote|1tab>|6.3.4<space|2spc>Voting Process in Round
+      <with|mode|<quote|math>|r> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-26>>
+
+      6.4<space|2spc>Block Finalization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-27>
+
+      <with|par-left|<quote|1tab>|6.4.1<space|2spc>Catching up
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-28>>
+
+      <with|par-left|<quote|2tab>|6.4.1.1<space|2spc>Sending catch-up
+      requests <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-29>>
+
+      <with|par-left|<quote|2tab>|6.4.1.2<space|2spc>Processing catch-up
+      requests <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-30>>
+
+      <with|par-left|<quote|2tab>|6.4.1.3<space|2spc>Processing catch-up
+      responses <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-31>>
+
+      6.5<space|2spc>Bridge design (BEEFY)
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-32>
+
+      <with|par-left|<quote|2tab>|6.5.0.1<space|2spc>Preliminaries
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-33>>
+    </associate>
+  </collection>
+</auxiliary>
