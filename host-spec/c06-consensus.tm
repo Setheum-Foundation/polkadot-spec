@@ -2149,7 +2149,7 @@
     <qed>
   </with>
 
-  <section|Bridge design (BEEFY)>
+  <section|Bridge design (BEEFY)><label|sect-grandpa-beefy>
 
   The BEEFY (Bridge Effiency Enabling Finality Yielder) is a secondary
   protocol to GRANDPA to support efficient bridging between the Polkadot
@@ -2174,10 +2174,11 @@
   <\definition>
     The statement, <text|<math|<text|<strong|S>>>>, is the same piece of
     information which every relay chain validator is voting on. Namely, the
-    MMR of all the block header hashes leading up to the latest, finalized
-    block. The Polkadot Host uses ECDSA for signing the statement, since
-    Ethereum has easier compatibility for it. <todo|how does one map the
-    validator set keys to the corresponding ECDSA keys?>
+    MMR root of all the block header hashes leading up to the latest,
+    finalized block. The validator sends this signed statement to the relayer
+    on every new, finalized block. The Polkadot Host uses ECDSA for signing
+    the statement, since Ethereum has easier compatibility for it. <todo|how
+    does one map the validator set keys to the corresponding ECDSA keys?>
   </definition>
 
   <\definition>
@@ -2308,6 +2309,7 @@
     <associate|sect-consensus-message-digest|<tuple|6.1.2|?>>
     <associate|sect-epoch-randomness|<tuple|6.2.5|?>>
     <associate|sect-finality|<tuple|6.3|?>>
+    <associate|sect-grandpa-beefy|<tuple|6.5|?>>
     <associate|sect-grandpa-catchup|<tuple|6.4.1|?>>
     <associate|sect-grandpa-catchup-messages|<tuple|6.3.2.3|?>>
     <associate|sect-sending-catchup-request|<tuple|6.4.1.1|?>>

@@ -1,4 +1,4 @@
-<TeXmacs|1.99.17>
+<TeXmacs|1.99.16>
 
 <project|host-spec.tm>
 
@@ -289,8 +289,7 @@
     allows the Polkadot Host to perform information about blocks. This is a
     <em|Request-Response substream>.
 
-    The messages are specified in Section
-    <reference|sect-msg-block-request>.
+    The messages are specified in Section <reference|sect-msg-block-request>.
 
     <item><verbatim|/dot/transactions/1> - a substream/notification protocol
     which sends transactions to connected peers. This is a <em|Notification
@@ -309,6 +308,13 @@
 
     <todo|This substream will change in the future. See <hlink|issue
     #7252|https://github.com/paritytech/substrate/issues/7252>.>
+
+    <item><verbatim|/paritytech/beefy/1> - a substream/notification protocol
+    which sends signed BEEFY statements, as described in Section
+    <reference|sect-grandpa-beefy>, to connected peers. This is a
+    <em|Notification> substream.
+
+    The messages are specified in Section <todo|TODO>
   </itemize>
 
   <strong|Note>: the <verbatim|/dot/> prefixes on those substreams are known
@@ -519,7 +525,42 @@
   <verbatim|/paritytech/grandpa/1> substream. The process for the creation of
   such votes is described in Section <reference|sect-finality>.
 
-  \;
+  <subsubsection|GRANDPA BEEFY><label|sect-msg-grandpa-beefy>
+
+  <\todo>
+    TODO
+  </todo>
+
+  <\definition>
+    A signed commitment is a datastructure of the following format:
+
+    <\eqnarray*>
+      <tformat|<table|<row|<cell|M<rsub|BFY>>|<cell|=>|<cell|Enc<rsub|SC><around*|(|C,S<rsub|n>|)>>>|<row|<cell|C>|<cell|=>|<cell|<around*|(|M<rsub|mr>,B<rsub|n>,id<rsub|\<bbb-V\>>|)>>>|<row|<cell|S<rsub|n>>|<cell|=>|<cell|<around*|(|V<rsup|sig><rsub|0>,\<ldots\>,V<rsup|sig><rsub|n>|)>>>>>
+    </eqnarray*>
+  </definition>
+
+  where
+
+  <\itemize-dot>
+    <item><math|M<rsub|mr>> is the MMR root of all the block header hashes
+    leading up to the latest, finalized block.
+
+    <item><math|B<rsub|n>> is the block number this commitment is for, namely
+    the latest, finalized block.
+
+    <item><math|id<rsub|\<bbb-V\>>> is the current authority set Id as
+    defined in Definition <reference|defn-authority-set-id>.
+
+    <item><math|S<rsub|n>> is an array where its exact size matches the
+    number of validators in the current authority set as specified in
+    <math|id<rsub|\<bbb-V\>>>. Individual items are of the type
+    <verbatim|Option> as defined in Definition <todo|TODO> which can contain
+    a signature of the same statement of a validator which is active in the
+    current authority set. It's critical that the signatures are sorted based
+    on their corresponding public key entry in the authority set.
+
+    See Section <todo|TODO> which explains this behavior in more detail.
+  </itemize-dot>
 
   <\with|par-mode|right>
     <qed>
@@ -527,3 +568,144 @@
 
   \;
 </body>
+
+<\initial>
+  <\collection>
+    <associate|chapter-nr|3>
+    <associate|page-first|33>
+    <associate|section-nr|3>
+    <associate|subsection-nr|4>
+  </collection>
+</initial>
+
+<\references>
+  <\collection>
+    <associate|auto-1|<tuple|4|?>>
+    <associate|auto-10|<tuple|1.7.1|?>>
+    <associate|auto-11|<tuple|1.7.2|?>>
+    <associate|auto-12|<tuple|1|?>>
+    <associate|auto-13|<tuple|2|?>>
+    <associate|auto-14|<tuple|3|?>>
+    <associate|auto-15|<tuple|4|?>>
+    <associate|auto-16|<tuple|5|?>>
+    <associate|auto-17|<tuple|6|?>>
+    <associate|auto-18|<tuple|1.7.3|?>>
+    <associate|auto-19|<tuple|1.7.4|?>>
+    <associate|auto-2|<tuple|1|?>>
+    <associate|auto-20|<tuple|1.7.5|?>>
+    <associate|auto-3|<tuple|1.1|?>>
+    <associate|auto-4|<tuple|1.2|?>>
+    <associate|auto-5|<tuple|1.3|?>>
+    <associate|auto-6|<tuple|1.4|?>>
+    <associate|auto-7|<tuple|1.5|?>>
+    <associate|auto-8|<tuple|1.6|?>>
+    <associate|auto-9|<tuple|1.7|?>>
+    <associate|defn-block-announce|<tuple|3|?>>
+    <associate|defn-block-announce-handshake|<tuple|2|?>>
+    <associate|defn-peer-id|<tuple|1|?>>
+    <associate|defn-transactions-message|<tuple|6|?>>
+    <associate|sect-connection-establishment|<tuple|1.4|?>>
+    <associate|sect-discovery-mechanism|<tuple|1.3|?>>
+    <associate|sect-encryption-layer|<tuple|1.5|?>>
+    <associate|sect-msg-block-announce|<tuple|1.7.1|?>>
+    <associate|sect-msg-block-request|<tuple|1.7.2|?>>
+    <associate|sect-msg-grandpa|<tuple|1.7.4|?>>
+    <associate|sect-msg-grandpa-beefy|<tuple|1.7.5|?>>
+    <associate|sect-msg-transactions|<tuple|1.7.3|?>>
+    <associate|sect-network-messages|<tuple|1.7|?>>
+    <associate|sect-networking|<tuple|4|?>>
+    <associate|sect-networking-external-docs|<tuple|1.1|?>>
+    <associate|sect-protocols-substreams|<tuple|1.6|?>>
+  </collection>
+</references>
+
+<\auxiliary>
+  <\collection>
+    <\associate|table>
+      <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
+        <with|font-family|<quote|tt>|language|<quote|verbatim>|BlockRequest>
+        Protobuf message.
+      </surround>|<pageref|auto-12>>
+
+      <tuple|normal|<\surround|<hidden-binding|<tuple>|2>|>
+        Bits of block data to be requested.
+      </surround>|<pageref|auto-13>>
+
+      <tuple|normal|<\surround|<hidden-binding|<tuple>|3>|>
+        Protobuf message indicating the block to start from.
+      </surround>|<pageref|auto-14>>
+
+      <tuple|normal|<\surround|<hidden-binding|<tuple>|4>|>
+        <with|font-family|<quote|tt>|language|<quote|verbatim>|Direction>
+        Protobuf structure.
+      </surround>|<pageref|auto-15>>
+
+      <tuple|normal|<\surround|<hidden-binding|<tuple>|5>|>
+        <with|font-family|<quote|tt>|language|<quote|verbatim>|BlockResponse>
+        Protobuf message.
+      </surround>|<pageref|auto-16>>
+
+      <tuple|normal|<\surround|<hidden-binding|<tuple>|6>|>
+        <with|font-series|<quote|bold>|math-font-series|<quote|bold>|BlockData>
+        Protobuf structure.
+      </surround>|<pageref|auto-17>>
+    </associate>
+    <\associate|toc>
+      <vspace*|2fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|font-size|<quote|1.19>|4<space|2spc>Networking>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-1><vspace|1fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Introduction>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-2><vspace|0.5fn>
+
+      <with|par-left|<quote|1tab>|1.1<space|2spc>External Documentation
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-3>>
+
+      <with|par-left|<quote|1tab>|1.2<space|2spc>Node Identities
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-4>>
+
+      <with|par-left|<quote|1tab>|1.3<space|2spc>Discovery mechanism
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-5>>
+
+      <with|par-left|<quote|1tab>|1.4<space|2spc>Connection establishment
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-6>>
+
+      <with|par-left|<quote|1tab>|1.5<space|2spc>Encryption Layer
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-7>>
+
+      <with|par-left|<quote|1tab>|1.6<space|2spc>Protocols and Substreams
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-8>>
+
+      <with|par-left|<quote|1tab>|1.7<space|2spc>Network Messages
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-9>>
+
+      <with|par-left|<quote|2tab>|1.7.1<space|2spc>Announcing blocks
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-10>>
+
+      <with|par-left|<quote|2tab>|1.7.2<space|2spc>Requesting blocks
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-11>>
+
+      <with|par-left|<quote|2tab>|1.7.3<space|2spc>Transactions
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-18>>
+
+      <with|par-left|<quote|2tab>|1.7.4<space|2spc>GRANDPA Votes
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-19>>
+
+      <with|par-left|<quote|2tab>|1.7.5<space|2spc>GRANDPA BEEFY
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-20>>
+    </associate>
+  </collection>
+</auxiliary>
