@@ -557,9 +557,9 @@
   </definition>
 
   <\definition>
-    A vote message, <math|M<rsub|v>>, is direct vote created by the Polkadot
-    Host on every BEEFY round and is gossiped to its peers. The message is a
-    datastructure of the following format:
+    <label|defn-msg-beefy-gossip>A vote message, <math|M<rsub|v>>, is direct
+    vote created by the Polkadot Host on every BEEFY round and is gossiped to
+    its peers. The message is a datastructure of the following format:
 
     <\eqnarray*>
       <tformat|<table|<row|<cell|M<rsub|v>>|<cell|=>|<cell|Enc<rsub|SC><around*|(|C,A<rsup|bfy><rsub|id>,A<rsub|sig><rsub|>|)>>>>>
@@ -612,11 +612,11 @@
   </definition>
 
   <\definition>
-    A signed commitment witness, <math|M<rsup|w><rsub|sc>>, is a light
-    version of the signed commitment as defined in Definition
-    <reference|defn-grandpa-beefy-signed-commitment>. Instead of containing
-    the entire list of signatures, it only claims which validator signed the
-    statement.
+    <label|defn-grandpa-beefy-signed-commitment-witness>A signed commitment
+    witness, <math|M<rsup|w><rsub|sc>>, is a light version of the signed
+    commitment as defined in Definition <reference|defn-grandpa-beefy-signed-commitment>.
+    Instead of containing the entire list of signatures, it only claims which
+    validator signed the statement.
 
     The message is a datastructure of the following format:
 
@@ -690,6 +690,8 @@
     <associate|defn-block-announce-handshake|<tuple|2|?>>
     <associate|defn-grandpa-beefy-commitment|<tuple|7|?>>
     <associate|defn-grandpa-beefy-signed-commitment|<tuple|9|?>>
+    <associate|defn-grandpa-beefy-signed-commitment-witness|<tuple|10|?>>
+    <associate|defn-msg-beefy-gossip|<tuple|8|?>>
     <associate|defn-peer-id|<tuple|1|?>>
     <associate|defn-transactions-message|<tuple|6|?>>
     <associate|sect-connection-establishment|<tuple|1.4|?>>
