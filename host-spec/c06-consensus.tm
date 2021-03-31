@@ -2156,9 +2156,9 @@
   network (relay chain) and remote, segregated blockchains, such as Ethereum,
   which were not built with the Polkadot interchain operability in mind. The
   protocol allows participants of the remote network to verify finality
-  proofs created by the Polkadot relay chain validators by reading on chain
-  data. In other words: clients in the Ethereum network should able to verify
-  that the Polkadot network is at a specific state.
+  proofs created by the Polkadot relay chain validators. In other words:
+  clients in the Ethereum network should able to verify that the Polkadot
+  network is at a specific state.
 
   \;
 
@@ -2170,34 +2170,34 @@
   <subsection|Preliminaries>
 
   <\definition>
-    Merkle Mountain Ranges, MMR, as defined in Definition <todo|TODO> are
-    used as an efficient way to communicate block headers and signatures to
-    light clients.
+    Merkle Mountain Ranges, <strong|MMR>, as defined in Definition
+    <todo|TODO> are used as an efficient way to send block headers and
+    signatures to light clients.
   </definition>
 
   <\definition>
-    <label|defn-beefy-statement>The statement is the same piece of
+    <label|defn-beefy-statement>The <strong|statement> is the same piece of
     information which every relay chain validator is voting on. Namely, the
     MMR root of all the block header hashes leading up to the latest,
     finalized block.
   </definition>
 
   <\definition>
-    <label|defn-beefy-witness-data>Witness data contains the statement as
-    defined in Definition <reference|defn-beefy-statement> an array
-    indicating which validator of the Polkadot network voted for the
-    statement (but not the signatures themselves) and an MMR root of the
+    <strong|<label|defn-beefy-witness-data>Witness data> contains the
+    statement as defined in Definition <reference|defn-beefy-statement>, an
+    array indicating which validator of the Polkadot network voted for the
+    statement (but not the signatures themselves) and a MMR root of the
     signatures. The indicators of which validator voted for the statement are
-    just claimes and provide no guarantees . The network message is defined
-    in Definition <reference|defn-grandpa-beefy-signed-commitment-witness>
-    and the relayer saves it on the chain of the remote network.
+    just claimes and provide no proofs . The network message is defined in
+    Definition <reference|defn-grandpa-beefy-signed-commitment-witness> and
+    the relayer saves it on the chain of the remote network.
   </definition>
 
   <\definition>
-    <label|defn-beefy-light-client>A light client is an abstract entity in a
-    remote network such as Ethereum. It can be a node or a smart contract
-    with the intent of requesting finality proofs from the Polkadot network.
-    A light client reads the witness data as defined in Definition
+    <label|defn-beefy-light-client>A <strong|light client> is an abstract
+    entity in a remote network such as Ethereum. It can be a node or a smart
+    contract with the intent of requesting finality proofs from the Polkadot
+    network. A light client reads the witness data as defined in Definition
     <reference|defn-beefy-witness-data> from the chain, then requests the
     signatures directly from the relayer in order to verify those.
 
@@ -2208,12 +2208,12 @@
   </definition>
 
   <\definition>
-    <label|defn-beefy-relayer>A relayer (or \Pprover\Q) is an abstract entity
-    which takes finality proofs from the Polkadot network and makes those
-    available to the light clients. Inherently, the relayer tries to convince
-    the light clients that the finality proofs have been voted for by the
-    Polkadot relay chain validators. The relayer operates offchain and can
-    for example be a node or a collection of nodes.
+    <label|defn-beefy-relayer>A <strong|relayer> (or \Pprover\Q) is an
+    abstract entity which takes finality proofs from the Polkadot network and
+    makes those available to the light clients. Inherently, the relayer tries
+    to convince the light clients that the finality proofs have been voted
+    for by the Polkadot relay chain validators. The relayer operates offchain
+    and can for example be a node or a collection of nodes.
   </definition>
 
   <subsection|Voting on Statements>
@@ -2222,13 +2222,14 @@
   <reference|defn-beefy-statement> and gossips it as part of a vote as
   defined in Definition <reference|defn-msg-beefy-gossip> to its peers on
   every new, finalized block. The Polkadot Host uses ECDSA for signing the
-  statement, since Ethereum has easier compatibility for it. <todo|how does
-  one map the validator set keys to the corresponding ECDSA keys?>
+  statement, since Ethereum has better compatibility for it compared to
+  SR25519 or ED25519. <todo|how does one map the validator set keys to the
+  corresponding ECDSA keys?>
 
   <subsection|Committing Witnesses><label|sect-beefy-committing-witnesses>
 
   The relayer as defined in Definition <reference|defn-beefy-relayer>
-  participats in the Polkadot network by collecting the gossiped votes as
+  participates in the Polkadot network by collecting the gossiped votes as
   defined in Definition <reference|defn-msg-beefy-gossip>. Those votes are
   converted into the witness data structure as defined in Definition
   <reference|defn-beefy-witness-data>. and the relayer saves the data on the
@@ -2240,19 +2241,21 @@
   How the witness data is saved on the remote chain varies among networks or
   implementations. On Ethereum, for example, the relayer could call a smart
   contract which saves the witness data on chain and light clients can fetch
-  this data. A critical requirement is that the light clients can verify the
-  validity of the finality proofs themselves without having to trust the
-  relayer. The relayer essentially just moves information around.
+  this data.
+
+  \;
+
+  <todo|Add note about 2/3 majority>
 
   <subsection|Requesting Signed Commitments>
 
   A light client as defined in Definition <reference|defn-beefy-light-client>
   fetches the witness data as defined in Definition
   <reference|defn-beefy-witness-data> from the chain. Once the light client
-  knows which validator apparently voted for the specified statement, it
-  needs to request the signature to verify whether the claim is actually
-  true. This is achieved by requesting signed commitments as defined in
-  Definition <reference|defn-grandpa-beefy-signed-commitment>.
+  knows which validators apparently voted for the specified statement, it
+  needs to request the signatures from the relayer to verify whether the
+  claims are actually true. This is achieved by requesting signed commitments
+  as defined in Definition <reference|defn-grandpa-beefy-signed-commitment>.
 
   \;
 
@@ -2525,9 +2528,17 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-33>>
 
-      <with|par-left|<quote|1tab>|6.5.2<space|2spc>Signing statements
+      <with|par-left|<quote|1tab>|6.5.2<space|2spc>Voting on Statements
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-34>>
+
+      <with|par-left|<quote|1tab>|6.5.3<space|2spc>Committing Witnesses
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-35>>
+
+      <with|par-left|<quote|1tab>|6.5.4<space|2spc>Requesting Signed
+      Commitments <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-36>>
     </associate>
   </collection>
 </auxiliary>
